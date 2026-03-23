@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todo/config/routes/route_location.dart';
 import 'package:todo/data/data.dart';
+import 'package:todo/providers/providers.dart';
 import 'package:todo/utils/extensions.dart';
 import 'package:todo/utils/task_categories.dart';
 import 'package:todo/widgets/display_list_of_tasks.dart';
 import 'package:todo/widgets/display_white_text.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   static HomeScreen builder(BuildContext context, GoRouterState state) => const HomeScreen();
   const HomeScreen ({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final deviceSize = context.deviceSize;
     final colors = context.colorScheme;
+    final taskState = ref.watch(taskProvider);
     return Scaffold(
       body: Stack(
         children: [
@@ -58,38 +61,13 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    DisplayListOfTasks(tasks:[
-                      Task(title: 'title',
-                          note: 'note',
-                          time: '11:47',
-                          date: 'Mar, 16',
-                          isCompleted: false,
-                          category: TaskCategories.shopping),
-                      Task(title: 'title 2',
-                          note: 'note',
-                          time: '15:12',
-                          date: 'Mar, 16',
-                          isCompleted: false,
-                          category: TaskCategories.education)
-                    ]),
+                    DisplayListOfTasks(
+                      tasks: taskState.tasks,),
                     const Gap(20),
                     Text('Completed', style: context.textTheme.headlineMedium,),
                     const Gap(20),
-                    DisplayListOfTasks(tasks: [
-                      Task(title: 'title',
-                          note: 'note',
-                          time: '11:47',
-                          date: 'Mar, 16',
-                          isCompleted: true,
-                          category: TaskCategories.personal),
-                      Task(title: 'title 2',
-                          note: 'note',
-                          time: '15:12',
-                          date: 'Mar, 16',
-                          isCompleted: true,
-                          category: TaskCategories.work)
-                    ],
-                      isCompletedTasks: true),
+                    DisplayListOfTasks(
+                        tasks: taskState.tasks, isCompletedTasks: true),
                     Gap(20),
                     ElevatedButton(
                       onPressed: () => context.push(RouteLocation.createTask),

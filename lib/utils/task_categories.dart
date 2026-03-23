@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 enum TaskCategories {
@@ -13,8 +11,18 @@ enum TaskCategories {
   travel(Icons.school, Colors.blueGrey),
   work(Icons.work, Colors.orange);
 
+  static TaskCategories stringToCategory(String value) {
+    try {
+      return TaskCategories.values.firstWhere(
+        (category) => category.name == value,
+      );
+    } catch (e) {
+      return TaskCategories.others;
+    }
+  }
 
   final IconData icon;
   final Color color;
+
   const TaskCategories(this.icon, this.color);
 }

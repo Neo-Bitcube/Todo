@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:todo/utils/task_categories.dart';
+import 'package:todo/utils/task_keys.dart';
 
-class Task extends Equatable{
+class Task extends Equatable {
   final int? id;
   final String title;
   final String note;
@@ -10,15 +11,59 @@ class Task extends Equatable{
   final TaskCategories category;
   final bool isCompleted;
 
- const Task({
+  const Task({
     this.id,
     required this.title,
     required this.note,
     required this.time,
     required this.date,
     required this.isCompleted,
-   required this.category
+    required this.category,
   });
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      TaskKeys.id: id,
+      TaskKeys.title: title,
+      TaskKeys.note: note,
+      TaskKeys.time: time,
+      TaskKeys.date: date,
+      TaskKeys.category: category.name,
+      TaskKeys.isCompleted: isCompleted ? 1 : 0,
+    };
+  }
+
+  factory Task.fromJson(Map<String, dynamic> map) {
+    return Task(
+      id: map[TaskKeys.id] != null ? map[TaskKeys.id] as int : null,
+      title: map[TaskKeys.title] as String,
+      note: map[TaskKeys.note] as String,
+      time: map[TaskKeys.time] as String,
+      date: map[TaskKeys.date] as String,
+      category: TaskCategories.stringToCategory(map[TaskKeys.category] as String),
+      isCompleted: (map[TaskKeys.isCompleted] as int) == 1,
+    );
+  }
+
+  Task copyWith({
+    int? id,
+    String? title,
+    String? note,
+    String? time,
+    String? date,
+    TaskCategories? category,
+    bool? isCompleted,
+  }) {
+    return Task(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      note: note ?? this.note,
+      time: time ?? this.time,
+      date: date ?? this.date,
+      category: category ?? this.category,
+      isCompleted: isCompleted ?? this.isCompleted,
+    );
+  }
 
   @override
   List<Object?> get props {
@@ -28,6 +73,8 @@ class Task extends Equatable{
       note,
       time,
       date,
-      isCompleted
+      isCompleted,
+      category,
     ];
-  }}
+  }
+}
