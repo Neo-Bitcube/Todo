@@ -40,8 +40,8 @@ class Task extends Equatable {
       note: map[TaskKeys.note] as String,
       time: map[TaskKeys.time] as String,
       date: map[TaskKeys.date] as String,
-      category: TaskCategories.stringToCategory(map[TaskKeys.category] as String),
-      isCompleted: (map[TaskKeys.isCompleted] as int) == 1,
+      category: TaskCategories.stringToCategory(map[TaskKeys.category]),
+      isCompleted: map[TaskKeys.isCompleted] == 1 ? true : false,
     );
   }
 

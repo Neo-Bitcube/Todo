@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/data/models/task.dart';
+import 'package:todo/providers/providers.dart';
+import 'package:todo/utils/app_alerts.dart';
 import 'package:todo/utils/extensions.dart';
 import 'package:todo/widgets/task_details.dart';
 import 'package:todo/widgets/task_tile.dart';
 
 import 'common_container.dart';
 
-class DisplayListOfTasks extends StatelessWidget {
+class DisplayListOfTasks extends ConsumerWidget {
   const DisplayListOfTasks({super.key, required this.tasks, this.isCompletedTasks = false});
 
   final List<Task> tasks;
   final bool isCompletedTasks;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final deviceSize = context.deviceSize;
     final height = isCompletedTasks ? deviceSize.height * 0.25 : deviceSize.height * 0.3;
     final emptyTaskMessage = isCompletedTasks ? 'There are no completed tasks yet' : 'There is no task todo!';
@@ -30,14 +33,20 @@ class DisplayListOfTasks extends StatelessWidget {
           final task = tasks[index];
           return InkWell(
             onLongPress: () {
-
+              AppAlerts.showDeleteAlertDialog(context, ref, task);
             },
               onTap: () async{
                 await showModalBottomSheet(context: context, builder: (ctx){
                   return TaskDetails(task: task);
                 } );
               },
-              child: TaskTile(task: task)
+              child: TaskTile(task: task, onCompleted: (value) async{
+                await ref.read(taskProvider.notifier).updateTask(task).then((value) {
+                  AppAlerts.dislplaySnackBar(context, task.isCompleted
+                      ? 'Task incomplete'
+                      : 'Task completed successfully');
+                });
+              },)
           );
         }, separatorBuilder: (BuildContext context, int index) {
           return const Divider(thickness: 1.5);

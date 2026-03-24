@@ -43,7 +43,7 @@ class TaskNotifier extends Notifier<TaskState> {
     }
   }
 
-  Future<void> getTasks() async {
+  void getTasks() async {
     try {
       final tasks = await _repository.getAllTasks();
       state = state.copyWith(tasks: tasks);
